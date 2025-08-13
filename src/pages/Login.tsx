@@ -110,7 +110,7 @@ export default function Login() {
             <div className="p-3 bg-primary rounded-xl">
               <Pill className="h-8 w-8 text-primary-foreground" />
             </div>
-            <h1 className="text-4xl font-bold">PharmaLytics Nexus</h1>
+            <h1 className="text-4xl font-bold">PharmaLytics</h1>
           </div>
           <h2 className="text-2xl font-semibold text-muted-foreground">
             Advanced AI-Powered Healthcare Platform

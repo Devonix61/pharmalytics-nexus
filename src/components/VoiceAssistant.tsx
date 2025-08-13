@@ -90,7 +90,11 @@ export function VoiceAssistant() {
         if (drugMatches.length >= 2) {
           const medications = drugMatches.map(name => ({ name }));
           const result = await apiClient.checkDrugInteractions(medications);
-          response = `I found ${result.interactions?.length || 0} interactions. Risk score: ${result.overall_risk_score}/5`;
+          if (result.success) {
+            response = `I found ${result.data.interactions?.length || 0} interactions. Risk level: ${result.data.riskLevel}`;
+          } else {
+            response = "Sorry, I couldn't check for interactions at the moment.";
+          }
         } else {
           response = "Please specify at least two medication names to check for interactions.";
         }

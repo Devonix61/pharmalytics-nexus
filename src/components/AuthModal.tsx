@@ -32,8 +32,12 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     
     try {
       const response = await apiClient.login(loginData.username, loginData.password);
-      onSuccess(response.user);
-      onClose();
+      if (response.success) {
+        onSuccess(response.data.user);
+        onClose();
+      } else {
+        setError(response.error || 'Login failed');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -52,8 +56,12 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         registerData.password,
         registerData.role
       );
-      onSuccess(response.user);
-      onClose();
+      if (response.success) {
+        onSuccess(response.data.user);
+        onClose();
+      } else {
+        setError(response.error || 'Registration failed');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
@@ -65,7 +73,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Welcome to PharmaLytics Nexus</DialogTitle>
+          <DialogTitle>Welcome to PharmaLytics</DialogTitle>
           <DialogDescription>
             Sign in to access advanced drug interaction analysis
           </DialogDescription>

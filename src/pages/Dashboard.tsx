@@ -3,6 +3,7 @@ import NavigationHeader from "@/components/NavigationHeader";
 import { AdvancedFeaturesHub } from "@/components/AdvancedFeaturesHub";
 import UserDashboard from "@/components/UserDashboard";
 import Footer from "@/components/Footer";
+import { ClinicalAnalysis } from "@/components/ClinicalAnalysis";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -125,10 +126,11 @@ export default function Dashboard() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="features">Features Hub</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
+            <TabsTrigger value="clinical">Clinical Analysis</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
@@ -312,6 +314,10 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="clinical">
+            <ClinicalAnalysis />
           </TabsContent>
 
           <TabsContent value="analytics">

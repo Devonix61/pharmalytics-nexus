@@ -24,7 +24,9 @@ const NavigationHeader = () => {
     const checkAuth = async () => {
       try {
         const profile = await apiClient.getProfile();
-        setUser(profile.user);
+        if (profile.success) {
+          setUser(profile.data);
+        }
       } catch (error) {
         // User not authenticated
       }
@@ -60,7 +62,7 @@ const NavigationHeader = () => {
               <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 PharmaLytics
               </h1>
-              <div className="text-xs text-muted-foreground">Nexus Platform</div>
+              <div className="text-xs text-muted-foreground">AI Platform</div>
             </div>
             <Badge variant="secondary" className="ml-2 text-xs">
               Demo
