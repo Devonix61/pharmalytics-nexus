@@ -7,6 +7,7 @@ import { ClinicalAnalysis } from "@/components/ClinicalAnalysis";
 import { UserProfile } from "@/components/UserProfile";
 import { UserSettings } from "@/components/UserSettings";
 import { DatasetTrainingGuide } from "@/components/DatasetTrainingGuide";
+import { toast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -27,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("overview");
+  const [isGenerating, setIsGenerating] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,6 +66,77 @@ export default function Dashboard() {
     } else {
       window.location.hash = '';
     }
+  };
+
+  const handleGenerateReport = async (reportType: string) => {
+    setIsGenerating(reportType);
+    
+    try {
+      // Simulate API call for report generation
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast({
+        title: "Report Generated Successfully",
+        description: `Your ${reportType} report has been generated and is ready for download.`,
+      });
+      
+      // Simulate adding a new report to the list
+      const newReport = {
+        id: Date.now(),
+        title: `${reportType} Report`,
+        type: reportType,
+        date: new Date().toISOString().split('T')[0],
+        status: 'completed',
+        patients: Math.floor(Math.random() * 500) + 100
+      };
+      
+    } catch (error) {
+      toast({
+        title: "Report Generation Failed",
+        description: "There was an error generating your report. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(null);
+    }
+  };
+
+  const handleViewReport = (reportId: number, reportTitle: string) => {
+    toast({
+      title: "Opening Report",
+      description: `Opening ${reportTitle} in viewer...`,
+    });
+    // Simulate opening report viewer
+    setTimeout(() => {
+      toast({
+        title: "Report Opened",
+        description: "Report is now open in the viewer.",
+      });
+    }, 1000);
+  };
+
+  const handleDownloadReport = (reportId: number, reportTitle: string) => {
+    toast({
+      title: "Downloading Report",
+      description: `Downloading ${reportTitle}...`,
+    });
+    
+    // Simulate file download
+    setTimeout(() => {
+      // Create a mock download
+      const element = document.createElement('a');
+      const file = new Blob(['Mock report data for ' + reportTitle], { type: 'text/plain' });
+      element.href = URL.createObjectURL(file);
+      element.download = `${reportTitle.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      
+      toast({
+        title: "Download Complete",
+        description: `${reportTitle} has been downloaded successfully.`,
+      });
+    }, 1500);
   };
 
   if (!user) {
@@ -212,9 +285,9 @@ export default function Dashboard() {
                   Generate and view comprehensive healthcare reports
                 </p>
               </div>
-              <Button>
+              <Button onClick={() => handleGenerateReport('Custom Report')} disabled={isGenerating === 'Custom Report'}>
                 <FileText className="mr-2 h-4 w-4" />
-                Generate New Report
+                {isGenerating === 'Custom Report' ? 'Generating...' : 'Generate New Report'}
               </Button>
             </div>
 
@@ -240,8 +313,13 @@ export default function Dashboard() {
                       <span>Patients covered:</span>
                       <span className="text-muted-foreground">245</span>
                     </div>
-                    <Button size="sm" className="w-full mt-4">
-                      Generate Report
+                    <Button 
+                      size="sm" 
+                      className="w-full mt-4" 
+                      onClick={() => handleGenerateReport('Drug Interaction Analysis')}
+                      disabled={isGenerating === 'Drug Interaction Analysis'}
+                    >
+                      {isGenerating === 'Drug Interaction Analysis' ? 'Generating...' : 'Generate Report'}
                     </Button>
                   </div>
                 </CardContent>
@@ -267,8 +345,13 @@ export default function Dashboard() {
                       <span>Monitored patients:</span>
                       <span className="text-muted-foreground">189</span>
                     </div>
-                    <Button size="sm" className="w-full mt-4">
-                      View Analytics
+                    <Button 
+                      size="sm" 
+                      className="w-full mt-4" 
+                      onClick={() => handleGenerateReport('Medication Adherence')}
+                      disabled={isGenerating === 'Medication Adherence'}
+                    >
+                      {isGenerating === 'Medication Adherence' ? 'Generating...' : 'View Analytics'}
                     </Button>
                   </div>
                 </CardContent>
@@ -294,8 +377,13 @@ export default function Dashboard() {
                       <span>Predictions made:</span>
                       <span className="text-muted-foreground">1,024</span>
                     </div>
-                    <Button size="sm" className="w-full mt-4">
-                      View Metrics
+                    <Button 
+                      size="sm" 
+                      className="w-full mt-4" 
+                      onClick={() => handleGenerateReport('AI Performance Metrics')}
+                      disabled={isGenerating === 'AI Performance Metrics'}
+                    >
+                      {isGenerating === 'AI Performance Metrics' ? 'Generating...' : 'View Metrics'}
                     </Button>
                   </div>
                 </CardContent>
@@ -330,11 +418,19 @@ export default function Dashboard() {
                         </Badge>
                         {report.status === 'completed' && (
                           <>
-                            <Button size="sm" variant="outline">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleViewReport(report.id, report.title)}
+                            >
                               <Eye className="mr-1 h-3 w-3" />
                               View
                             </Button>
-                            <Button size="sm" variant="outline">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleDownloadReport(report.id, report.title)}
+                            >
                               <Download className="mr-1 h-3 w-3" />
                               Download
                             </Button>
