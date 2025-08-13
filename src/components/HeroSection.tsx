@@ -5,7 +5,7 @@ import { Shield, Brain, Globe, Stethoscope, Users, Zap } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen bg-gradient-to-b from-background to-muted flex items-center">
+    <section className="relative min-h-screen bg-gradient-to-b from-background to-muted flex items-center pt-16">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 -right-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
@@ -21,8 +21,8 @@ const HeroSection = () => {
               HIPAA Compliant • FDA Validated • Clinically Proven
             </Badge>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-medical-teal bg-clip-text text-transparent leading-tight">
-              PharmaLytics Nexus
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-clinical-teal bg-clip-text text-transparent leading-tight">
+              PharmaLytics
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
