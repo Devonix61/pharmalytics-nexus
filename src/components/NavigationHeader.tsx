@@ -21,25 +21,39 @@ const NavigationHeader = () => {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const profile = await apiClient.getProfile();
-        if (profile.success) {
-          setUser(profile.data);
+    const checkAuth = () => {
+      const token = localStorage.getItem('authToken');
+      const userData = localStorage.getItem('user');
+      
+      if (token && userData) {
+        try {
+          setUser(JSON.parse(userData));
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('user');
         }
-      } catch (error) {
-        // User not authenticated
       }
     };
     
-    if (localStorage.getItem('auth_token')) {
-      checkAuth();
-    }
+    checkAuth();
+    
+    // Listen for storage changes (login/logout in other tabs)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'authToken' || e.key === 'user') {
+        checkAuth();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const handleLogout = () => {
-    apiClient.logout();
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
     setUser(null);
+    window.location.href = '/';
   };
 
   const navigation = [
