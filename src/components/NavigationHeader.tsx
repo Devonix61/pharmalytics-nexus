@@ -107,7 +107,6 @@ const NavigationHeader = () => {
           <div className="hidden md:flex items-center space-x-3">
             {user ? (
               <>
-                <span className="text-sm text-muted-foreground">Welcome, {user.username}</span>
                 <Button variant="outline" size="sm" onClick={handleLogout}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Sign Out
@@ -158,9 +157,6 @@ const NavigationHeader = () => {
               <div className="pt-4 border-t border-border space-y-2">
                 {user ? (
                   <>
-                    <div className="px-4 py-2 text-sm text-muted-foreground">
-                      Welcome, {user.username}
-                    </div>
                     <Button variant="outline" className="w-full justify-start" size="sm" onClick={handleLogout}>
                       <LogOut className="w-4 h-4 mr-3" />
                       Sign Out
