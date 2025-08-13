@@ -4,6 +4,8 @@ import { AdvancedFeaturesHub } from "@/components/AdvancedFeaturesHub";
 import UserDashboard from "@/components/UserDashboard";
 import Footer from "@/components/Footer";
 import { ClinicalAnalysis } from "@/components/ClinicalAnalysis";
+import { UserProfile } from "@/components/UserProfile";
+import { UserSettings } from "@/components/UserSettings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,6 +39,22 @@ export default function Dashboard() {
     
     setUser(JSON.parse(userData));
   }, [navigate]);
+
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'profile' || hash === 'settings') {
+      setActiveTab(hash);
+    }
+  }, []);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === 'profile' || value === 'settings') {
+      window.location.hash = value;
+    } else {
+      window.location.hash = '';
+    }
+  };
 
   if (!user) {
     return <div>Loading...</div>;
@@ -125,13 +144,15 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="features">Features Hub</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
             <TabsTrigger value="clinical">Clinical Analysis</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -339,6 +360,14 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="profile">
+            <UserProfile />
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <UserSettings />
           </TabsContent>
         </Tabs>
       </main>

@@ -93,10 +93,11 @@ const NavigationHeader = () => {
           <div className="hidden md:flex items-center space-x-3">
             {user ? (
               <>
-                <span className="text-sm text-muted-foreground">
-                  {user.username} ({user.role})
-                </span>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" onClick={() => window.location.hash = '#profile'}>
+                  <User className="w-4 h-4 mr-2" />
+                  Profile
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => window.location.hash = '#settings'}>
                   <Settings className="w-4 h-4 mr-2" />
                   Settings
                 </Button>
@@ -150,10 +151,11 @@ const NavigationHeader = () => {
               <div className="pt-4 border-t border-border space-y-2">
                 {user ? (
                   <>
-                    <div className="px-3 py-2 text-sm text-muted-foreground">
-                      {user.username} ({user.role})
-                    </div>
-                    <Button variant="ghost" className="w-full justify-start" size="sm">
+                    <Button variant="ghost" className="w-full justify-start" size="sm" onClick={() => { window.location.hash = '#profile'; setIsMenuOpen(false); }}>
+                      <User className="w-4 h-4 mr-3" />
+                      Profile
+                    </Button>
+                    <Button variant="ghost" className="w-full justify-start" size="sm" onClick={() => { window.location.hash = '#settings'; setIsMenuOpen(false); }}>
                       <Settings className="w-4 h-4 mr-3" />
                       Settings
                     </Button>
