@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -9,11 +9,36 @@ import {
   Users, 
   FileText,
   Settings,
-  LogOut
+  LogOut,
+  User
 } from "lucide-react";
+import { AuthModal } from "./AuthModal";
+import { apiClient } from "../lib/api";
 
 const NavigationHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const profile = await apiClient.getProfile();
+        setUser(profile.user);
+      } catch (error) {
+        // User not authenticated
+      }
+    };
+    
+    if (localStorage.getItem('auth_token')) {
+      checkAuth();
+    }
+  }, []);
+
+  const handleLogout = () => {
+    apiClient.logout();
+    setUser(null);
+  };
 
   const navigation = [
     { name: "Dashboard", href: "#dashboard", icon: Stethoscope },
@@ -64,14 +89,28 @@ const NavigationHeader = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost" size="sm">
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
-            </Button>
-            <Button variant="outline" size="sm">
-              <LogOut className="w-4 h-4 mr-2" />
-              Sign Out
-            </Button>
+            {user ? (
+              <>
+                <span className="text-sm text-muted-foreground">
+                  {user.username} ({user.role})
+                </span>
+                <Button variant="ghost" size="sm">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Settings
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleLogout}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" size="sm" onClick={() => setShowAuthModal(true)}>
+                  <User className="w-4 h-4 mr-2" />
+                  Sign In
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -107,19 +146,37 @@ const NavigationHeader = () => {
                 );
               })}
               <div className="pt-4 border-t border-border space-y-2">
-                <Button variant="ghost" className="w-full justify-start" size="sm">
-                  <Settings className="w-4 h-4 mr-3" />
-                  Settings
-                </Button>
-                <Button variant="outline" className="w-full justify-start" size="sm">
-                  <LogOut className="w-4 h-4 mr-3" />
-                  Sign Out
-                </Button>
+                {user ? (
+                  <>
+                    <div className="px-3 py-2 text-sm text-muted-foreground">
+                      {user.username} ({user.role})
+                    </div>
+                    <Button variant="ghost" className="w-full justify-start" size="sm">
+                      <Settings className="w-4 h-4 mr-3" />
+                      Settings
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start" size="sm" onClick={handleLogout}>
+                      <LogOut className="w-4 h-4 mr-3" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <Button variant="outline" className="w-full justify-start" size="sm" onClick={() => setShowAuthModal(true)}>
+                    <User className="w-4 h-4 mr-3" />
+                    Sign In
+                  </Button>
+                )}
               </div>
             </nav>
           </div>
         )}
       </div>
+      
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={(userData) => setUser(userData)}
+      />
     </header>
   );
 };

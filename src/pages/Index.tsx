@@ -5,6 +5,7 @@ import DrugInteractionChecker from "@/components/DrugInteractionChecker";
 import UserDashboard from "@/components/UserDashboard";
 import TechnologyStack from "@/components/TechnologyStack";
 import Footer from "@/components/Footer";
+import { AIFeatures } from "../components/AIFeatures";
 
 const Index = () => {
   return (
@@ -15,6 +16,11 @@ const Index = () => {
         <FeatureShowcase />
         <div id="checker">
           <DrugInteractionChecker />
+        </div>
+        <div className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <AIFeatures />
+          </div>
         </div>
         <div id="dashboard">
           <UserDashboard />

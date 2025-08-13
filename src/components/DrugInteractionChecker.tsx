@@ -16,6 +16,7 @@ import {
   User,
   Calendar
 } from "lucide-react";
+import { apiClient } from "../lib/api";
 
 interface Medication {
   id: string;
@@ -40,6 +41,8 @@ const DrugInteractionChecker = () => {
   const [patientAge, setPatientAge] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [results, setResults] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Mock interaction results for demo
   const mockInteractions: InteractionResult[] = [
@@ -79,13 +82,31 @@ const DrugInteractionChecker = () => {
     setShowResults(false);
   };
 
-  const analyzeInteractions = () => {
+  const analyzeInteractions = async () => {
     setIsAnalyzing(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      setIsAnalyzing(false);
+    setError(null);
+    
+    try {
+      const medicationObjects = medications.map(med => ({ name: med.name, dosage: med.dosage, frequency: med.frequency }));
+      const response = await apiClient.checkDrugInteractions(
+        medicationObjects, 
+        patientAge ? parseInt(patientAge) : undefined
+      );
+      setResults(response);
       setShowResults(true);
-    }, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to analyze interactions');
+      // Show mock data for demo purposes
+      setResults({
+        interactions: mockInteractions,
+        overall_risk_score: 3,
+        total_interactions_found: mockInteractions.length,
+        recommendations: ["Consult physician", "Monitor closely"]
+      });
+      setShowResults(true);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const getSeverityColor = (severity: string) => {
@@ -252,7 +273,14 @@ const DrugInteractionChecker = () => {
                 </div>
               )}
 
-              {showResults && (
+              {error && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>{error} (Showing demo data)</AlertDescription>
+                </Alert>
+              )}
+
+              {showResults && results && (
                 <div className="space-y-4">
                   {/* Patient Info */}
                   {patientAge && (
@@ -264,8 +292,16 @@ const DrugInteractionChecker = () => {
                     </Alert>
                   )}
 
+                  {/* Risk Score */}
+                  <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                    <span className="font-medium">Overall Risk Score</span>
+                    <Badge variant={results.overall_risk_score > 3 ? "destructive" : "secondary"}>
+                      {results.overall_risk_score}/5
+                    </Badge>
+                  </div>
+
                   {/* Interaction Results */}
-                  {mockInteractions.map((interaction, index) => (
+                  {(results.interactions || mockInteractions).map((interaction: any, index: number) => (
                     <Alert key={index} variant={getSeverityColor(interaction.severity) as any}>
                       <div className="flex items-start">
                         {getSeverityIcon(interaction.severity)}
@@ -291,24 +327,25 @@ const DrugInteractionChecker = () => {
 
                   <Separator />
 
+                  {/* Recommendations */}
+                  {results.recommendations && results.recommendations.length > 0 && (
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h4 className="font-medium mb-2">AI Recommendations:</h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        {results.recommendations.map((rec: any, index: number) => (
+                          <li key={index}>• {typeof rec === 'string' ? rec : rec.recommendation || rec.type}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {/* Safe Combinations */}
                   <Alert>
                     <CheckCircle className="h-4 w-4 text-success" />
                     <AlertDescription>
-                      No severe interactions detected for other medication combinations in your list.
+                      Analysis complete. {results.total_interactions_found || 0} interaction(s) found.
                     </AlertDescription>
                   </Alert>
-
-                  {/* Next Steps */}
-                  <div className="bg-muted p-4 rounded-lg">
-                    <h4 className="font-medium mb-2">Recommended Next Steps:</h4>
-                    <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>• Consult with prescribing physician about interactions</li>
-                      <li>• Consider therapeutic alternatives where indicated</li>
-                      <li>• Monitor for signs and symptoms of adverse effects</li>
-                      <li>• Schedule regular follow-up appointments</li>
-                    </ul>
-                  </div>
                 </div>
               )}
             </Card>
