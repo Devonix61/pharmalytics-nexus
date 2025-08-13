@@ -42,10 +42,19 @@ export default function Dashboard() {
   }, [navigate]);
 
   useEffect(() => {
-    const hash = window.location.hash.replace('#', '');
-    if (hash === 'profile' || hash === 'settings') {
-      setActiveTab(hash);
-    }
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && ['overview', 'features', 'reports', 'clinical', 'analytics', 'training', 'profile', 'settings'].includes(hash)) {
+        setActiveTab(hash);
+      }
+    };
+    
+    // Check initial hash
+    handleHashChange();
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const handleTabChange = (value: string) => {
