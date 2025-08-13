@@ -20,6 +20,10 @@ import { ARPillIdentifier } from "./ARPillIdentifier";
 import { AdherenceMonitor } from "./AdherenceMonitor";
 import { MultiLanguageProcessor } from "./MultiLanguageProcessor";
 import { BlockchainValidator } from "./BlockchainValidator";
+import { PredictiveTimeline } from "./PredictiveTimeline";
+import { ChronicDiseaseOptimizer } from "./ChronicDiseaseOptimizer";
+import { RegionalDrugApproval } from "./RegionalDrugApproval";
+import { PharmacogenomicsAnalysis } from "./PharmacogenomicsAnalysis";
 
 interface Feature {
   id: string;
@@ -86,7 +90,8 @@ export function AdvancedFeaturesHub() {
       description: 'AI-powered timeline prediction for when drug interactions might occur',
       icon: <Calendar className="h-5 w-5" />,
       category: 'innovation',
-      status: 'coming-soon'
+      status: 'active',
+      component: <PredictiveTimeline />
     },
     {
       id: 'chronic-disease',
@@ -94,7 +99,8 @@ export function AdvancedFeaturesHub() {
       description: 'Specialized drug recommendations for chronic disease management',
       icon: <TrendingUp className="h-5 w-5" />,
       category: 'advanced',
-      status: 'coming-soon'
+      status: 'active',
+      component: <ChronicDiseaseOptimizer />
     },
     {
       id: 'regulatory-compliance',
@@ -102,7 +108,8 @@ export function AdvancedFeaturesHub() {
       description: 'Verify drug approval status across different countries and regions',
       icon: <Globe className="h-5 w-5" />,
       category: 'advanced',
-      status: 'coming-soon'
+      status: 'active',
+      component: <RegionalDrugApproval />
     },
     {
       id: 'genomics-integration',
@@ -110,7 +117,8 @@ export function AdvancedFeaturesHub() {
       description: 'Personalized drug recommendations based on genetic markers',
       icon: <Brain className="h-5 w-5" />,
       category: 'innovation',
-      status: 'coming-soon'
+      status: 'active',
+      component: <PharmacogenomicsAnalysis />
     }
   ];
 
